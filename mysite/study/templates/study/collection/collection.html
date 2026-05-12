@@ -1,0 +1,49 @@
+{% extends "study/base.html" %}
+{% block title %}Your Collection{% endblock %}
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/collection.css' %}">
+{% endblock %}
+{% block content %}
+ 
+{% if tag %}
+<div class="tag-filter-heading">
+    Showing sets tagged with <span>{{ tag.name }}</span>
+</div>
+{% endif %}
+ 
+<div class="collection-actions">
+    <h2 class="page-heading">My Collection</h2>
+    
+    <!-- Cutomer's Set History-->
+    <label for="history">Last Viewed Sets:</label>
+    <select  name="history" id="history">
+        {% for item in history %}
+            <option value="{{item.set_id}}">{{item.name}}</option>
+        {% endfor %}
+    </select>
+
+    <a href="{% url 'study:make_set' %}" class="btn btn-gold">+ New Set</a>
+</div>
+ 
+<div class="collection">
+    {% for set in sets %}
+    <div class="set">
+        <h4><a href="{{ set.get_absolute_url }}">{{ set.name }}</a></h4>
+        <h6>{{ set.card_amount }} cards</h6>
+        <h5>
+            {% for tag in set.tags.all %}
+            <a href="{% url 'study:set_collection_by_tag' tag.slug %}">{{ tag.name }}</a>
+            {% endfor %}
+        </h5>
+    </div>
+    {% empty %}
+    <div class="empty-collection">
+        <p>No sets yet. Create your first set to get started!</p>
+        <a href="{% url 'study:make_set' %}" class="btn btn-gold">+ Create a Set</a>
+    </div>
+    {% endfor %}
+</div>
+ 
+{% include "pagination.html" with page=sets %}
+{% endblock %}
